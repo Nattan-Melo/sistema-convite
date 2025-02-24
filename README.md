@@ -18,19 +18,20 @@ o planejamento e organização geral do evento.
 - `Convite:` individual para cada convidado, associado com sua identificação única
 
 ## Painel de Controle
-![control_panel](https://github.com/user-attachments/assets/2212e80e-d1cf-46a3-b18d-56737b8660a8)
+![control_panel](https://github.com/user-attachments/assets/b462e25f-d4ee-4942-a7fb-522cf89883bc)
 
 ## Link Individual do Convite
-![convite_detail](https://github.com/user-attachments/assets/75d32b54-6980-4e18-8fce-3a60dd841799)
+![convite_detail](https://github.com/user-attachments/assets/59a756eb-dc55-4eb7-8ae5-a7440d479ae8)
 
 ## Alterar Status do Convite
-![alter_status](https://github.com/user-attachments/assets/10e7c9b0-6ed0-461a-92be-47045e572c5b)
+![alter_status](https://github.com/user-attachments/assets/c20418b0-7eae-44c3-9fc0-9a5ccb867744)
 
 ## Acesso Desktop
-![desktop](https://github.com/user-attachments/assets/3c8a3126-7b92-4289-8de4-1bfcfadc718e)
+![desktop](https://github.com/user-attachments/assets/3db7ba99-1d1a-4957-8487-35a55069c7b8)
 
 ## Acesso Mobile
-![mobile](https://github.com/user-attachments/assets/39262e52-7d44-42f7-b33c-b63c0ba3ff6d)
+![Captura de tela de 2025-02-23 13-23-15](https://github.com/user-attachments/assets/2833d461-e4e2-476e-8dea-c986d34dc0dc)
+
 
 # :mag_right: Tecnologias Utilizadas
 
