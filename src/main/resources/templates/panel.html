@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de controle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
+   
+    <link rel="icon" th:href="@{/images/favicon.ico}">
+    
+</head>
+<body>
+
+    <header class="mb-3">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Painel de controle</a>
+            </div>
+        </nav>
+    </header>
+    <div class="container p-3">
+        <div class="d-flex flex-wrap mb-3">
+            <!-- INPUT - ID GuestData -->
+            <input type="text"  id="guestData" class="form-control me-2 mb-2" placeholder="Nome do convidado ou ID">
+
+            <select id="selectAction" class="form-select me-2 mb-2">
+                <option value="0">Adicionar convidado</option>
+                <option value="2">Alterar status</option>
+                <option value="3">Excluir convidado</option>
+            </select>
+            <button id="btnIncludeGuest" class="btn btn-primary flex-shrink-1">Confirmar</button>
+        </div>
+
+        <div class="mb-3">
+        <div class="form-check form-check-inline">
+            <input 
+                class="form-check-input"
+                type="radio"
+                value="0"
+                id="aggregateIndividual"
+                name="aggregate">
+            <label for="aggregateIndividual" class="form-check-label">Individual</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input 
+                class="form-check-input"
+                type="radio"
+                value="1"
+                id="aggregateFamily"
+                name="aggregate">
+            <label for="aggregateFamily" class="form-check-label">Família</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input 
+                class="form-check-input"
+                type="radio"
+                value="2"
+                id="aggregateCouple"
+                name="aggregate">
+            <label for="aggregateCouple" class="form-check-label">Casal</label>
+        </div>
+        </div>
+    
+        <div class="d-flex flex-wrap justify-content-between mb-3">
+            <h5 class="list-group-item me-3 text-primary" th:text="'Convites: '+ ${#lists.size(guests)}"></h5>
+            <h5 class="list-group-item me-3 text-warning" th:text="'Esperando: '+ ${STATcount.get('waiting')}"></h5>
+            <h5 class="list-group-item me-3 text-success" th:text="'Aceitos: '+ ${STATcount.get('accepted')}"></h5>
+            <h5 class="list-group-item me-3 text-danger" th:text="'Cancelados: '+ ${STATcount.get('cancelled')}"></h5>
+            <h5 class="list-group-item me-3 text-body-secondary" th:text="'Recusados: '+ ${STATcount.get('refused')}"></h5>
+        </div>
+        <div class="table-responsive">
+        <table class="table table-sm" id="guestVisualizer">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Status</th>
+
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="guest: ${guests}">
+                    <td th:text="${guest.id}"></td>
+                    <td th:text="${guest.name}"></td>
+                    <td th:switch="${guest.aggregate}">
+                        <span th:case="0" th:text="Individual"></span>
+                        <span th:case="1" th:text="Família"></span>
+                        <span th:case="2" th:text="Casal"></span>
+                    </td>
+                    <td th:switch="${guest.status}">
+                        <span th:case="0" th:text="Esperando"></span>
+                        <span th:case="1" th:text="Aceito"></span>
+                        <span th:case="2" th:text="Recusado"></span>
+                        <span th:case="3" th:text="Cancelado"></span>
+                    </td>
+                    <td>
+                        <button th:attr="onclick=|displayGuestInfoCallBack('${guest.name}','${guest.link}')|" role="link" class="btn btn-link me-2">
+                            <i class="bi bi-exclamation-circle-fill fs-5"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+            
+        </table>
+    </div>
+    </div>
+
+    <!-- Tipo: MODAL - Função: Altera o status -->
+    <div class="modal faded" tabindex="-1" id="alterGuestStatus">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Alterar status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body">
+                    <label>Selecione o status</label>
+                    <select class="form-select" id="selectGuestStatus">
+                        <option value="0">Esperando</option>
+                        <option value="1">Aceito</option>
+                        <option value="2">Recusado</option> 
+                        <option value="3">Cancelado</option>
+                       
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button class="btn btn-success" th:attr="onclick=|changeStatusCallback()|" >Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+   
+    <script th:inline="javascript">
+        var apiBaseUrl = [[${baseUrl}]];
+
+        const displayGuestInfoCallBack = (name ,link) =>{
+            swal(`Detalhes sobre ${name}`, `Convite:\n${link}`,
+                {
+                    buttons:{
+                        getInvite: { text: "Obter convite", value: true},
+                        closeInfo: { text: "Ok", value:false}
+                    }
+                })
+                .then((arg) => {
+                    if(arg == true){
+                        navigator.clipboard.writeText(link);
+                    }
+                });
+        }
+
+        const changeStatusCallback = async () => {
+            await fetch(`${apiBaseUrl}/api/guests/status`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                    id: $('#guestData').val(),
+                    status: $('#selectGuestStatus').find(':selected').val()
+                })
+            }).then(response => {
+                if(!response.ok)
+                {
+                    swal("Algo deu errado");
+                }
+                else
+                {
+                    location.reload();
+                }
+            });
+
+            
+        };
+
+        $(document).ready(()=>{
+            $("#btnIncludeGuest").click(async () => {
+
+                switch(parseInt($('#selectAction').find(':selected').val())){
+                    case 0:
+                    {
+                        var guestName = $('#guestData').val();
+                        if(guestName)
+                        {
+                            await fetch(`${apiBaseUrl}/api/include`,{
+                                method:'POST',
+                                headers: {
+                                    "Content-Type":"application/json"
+                                },
+                                body: JSON.stringify({
+                                    name: guestName,
+                                    aggregate: $("input[name='aggregate']:checked").val()
+                                })
+
+                            }).then(response => {
+                                if(!response.ok){
+                                    swal("Não foi possível completar a requisição");
+                                }
+                                else
+                                {
+                                    swal("Convidado adicionado com sucesso")
+                                    .then((value)=>{
+                                        location.reload();
+                                    }); 
+                                }
+                            });
+                        }
+                    }break;
+                
+                    case 1:
+                    {
+                        $('#buyOptionPane').modal('show');
+                        
+                    }break;
+                    case 2:
+                    {
+                        $('#alterGuestStatus').modal("show");
+                    }break;
+                    case 3:
+                    {
+                        await fetch(`${apiBaseUrl}/api/guests/${$('#guestData').val()}`,{ method: 'DELETE'}).then((response) =>{
+                            location.reload();
+                        });
+                        
+                    }break;
+                } 
+                    
+            });
+
+            $('#filter').click(async () => {
+                $('#filterData').modal('show');
+            });
+        });
+
+    </script>
+</body>
+</html>

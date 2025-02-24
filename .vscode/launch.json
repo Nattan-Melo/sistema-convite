@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-InviteApplication<invite>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.invite.invite.InviteApplication",
+            "projectName": "invite",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
